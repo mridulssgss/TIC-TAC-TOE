@@ -120,13 +120,13 @@ def firstDiagNMinusOne(board: TicTacToeBoard, ch):
     char_reads = 0
     for i in range(board.board_size):
         if(board.getMove(i, i) == ' '):
-            vacant_pos = i
+            vacant_pos = (i, i)
         elif(board.getMove(i, i) == ch):
             char_reads += 1
     if(char_reads == board.board_size - 1):
-        return (True, (vacant_pos, vacant_pos))       
+        return (True, vacant_pos)       
     else:
-        return (False, (vacant_pos, vacant_pos))
+        return (False, vacant_pos)
 
 def secondDiagMinusOne(board: TicTacToeBoard, ch):
     vacant_pos = -1
@@ -152,16 +152,20 @@ def winningMove(board: TicTacToeBoard, ch):
     mx, my = -1, -1
     for r in range(board.board_size):
         wmv, c = rowNMinusOne(board, r, ch)
-        if(wmv): return (r, c)
+        if(wmv): return (wmv, (r, c))
         if(c != -1 and mx == -1 and my == -1):
             mx, my = r, c
 
     for c in range(board.board_size):
         wmv, r = colNMinusOne(board, c, ch)
-        if(wmv): return (r, c)
+        if(wmv): return (wmv, (r, c))
     
     won, move_pos = diagNMinusOne(board, ch)
-    return move_pos if won else (mx, my)
+    if won: (won, move_pos)
+
+    won, move_pos = diagNMinusOne(board, ch)
+    #print(f"move = {move_pos} (mx, my) = {mx}, {my} won = {won}")
+    return (won, move_pos) if won else (False, (mx, my))
 
 def computerMove(board: TicTacToeBoard, move_char):
     "does move according to heuristic and changes state of board"
@@ -176,7 +180,7 @@ def computerMove(board: TicTacToeBoard, move_char):
 def playerMove(board: TicTacToeBoard, move_char):
     x, y = [int(j) for j in input().split()]
     while(not board.isLegal(x, y, move_char)):
-        print("Illegal Move Try Again")
+        print("Illegal Move. Try Again")
         x, y = [int(j) for j in input().split()]
     return x, y
 
@@ -195,6 +199,7 @@ def play(board: TicTacToeBoard, player, sym1, opp, sym2):
         
         board.prnBoard()
         move = opp(board, sym2)
+        print(f"Player Move = {move}")
         board.putMove(move[0], move[1], sym2)
         no_of_moves += 1
     
@@ -205,7 +210,7 @@ def play(board: TicTacToeBoard, player, sym1, opp, sym2):
         print("Player 2 wins")
 
 
-play(TicTacToeBoard(3), playerMove, 'O', playerMove, 'X')
+play(TicTacToeBoard(3), playerMove, 'O', computerMove, 'X')
 
     
 
