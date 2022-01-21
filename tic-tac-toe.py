@@ -39,33 +39,31 @@ class TicTacToeBoard:
             return ' '
     
     def _rowCheck(self, x, y):
-        if(self._board[x][y] == ' '): return False
         for j in range(self.board_size):
            if self._board[x][y] != self._board[x][j]:
                return False
         return True
     
     def _colCheck(self, x, y):
-        if(self._board[x][y] == ' '): return False
         for i in range(self.board_size):
             if self._board[x][y] != self._board[i][y]:
                 return False
         return True
     
-    def _diagCheck(self, x, y):
-        if(self._board[x][y] == ' '): return False
+    def _firstDiagCheck(self, x, y):
         for i in range(1, self.board_size):
-            if self._board[i][i] != self._board[0][0]:
-                return False
-            
+            if self._board[i][i] != self._board[0][0]: return False
+        return True
+
+    def _secondDiagCheck(self, x, y):
         for f in range(self.board_size):
             xd, yd = f, self.board_size - 1 - f
-            if self._board[xd][yd] != self._board[0][-1]:
-                return False
+            if self._board[xd][yd] != self._board[0][-1]: return False
         return True
 
     def winningMove(self, x, y):
-        return self._rowCheck(x, y) or self._colCheck(x, y) or ((x == y) and self._diagCheck(x, y))
+        if(self._board[x][y] == ' '): return False
+        return self._rowCheck(x, y) or self._colCheck(x, y) or (x == y and self._firstDiagCheck(x, y)) or ((x == self.board_size - 1 - y) and self._secondDiagCheck(x, y))
     
     def removeMove(self, x, y):
         if 0 <= x < self.board_size and 0 <= y < self.board_size:
@@ -155,7 +153,7 @@ def winningMove(board: TicTacToeBoard, ch):
     for r in range(board.board_size):
         wmv, c = rowNMinusOne(board, r, ch)
         if(wmv): return (r, c)
-        if(c != -1 and mx != -1 and my != -1):
+        if(c != -1 and mx == -1 and my == -1):
             mx, my = r, c
 
     for c in range(board.board_size):
@@ -168,8 +166,10 @@ def winningMove(board: TicTacToeBoard, ch):
 def computerMove(board: TicTacToeBoard, move_char):
     "does move according to heuristic and changes state of board"
     op_player = oppPlayer(move_char)
+    
     won, pos = winningMove(board, move_char)
     if(won): return pos
+
     won, pos = winningMove(board, op_player)
     return pos
 
@@ -190,11 +190,14 @@ def play(board: TicTacToeBoard, player, sym1, opp, sym2):
         move = player(board, sym1)
         board.putMove(move[0], move[1], sym1)
         no_of_moves += 1
+        
         if(board.winningMove(move[0], move[1])): break
+        
         board.prnBoard()
         move = opp(board, sym2)
         board.putMove(move[0], move[1], sym2)
         no_of_moves += 1
+    
     board.prnBoard()
     if(no_of_moves % 2):
         print("Player 1 wins")
