@@ -228,12 +228,41 @@ def play(board: TicTacToeBoard, player, sym1, opp, sym2):
     else:
         return Moves.lose
 
+def endScreen(msg):
+    clear()
+    if msg == Moves.draw:
+        print("Its a draw")
+    elif msg == Moves.win:
+        print("Player 1 Wins")
+    else:
+        print("Player 2 Wins")
 
 def playGame(board_size, player1, sym1, player2, sym2):
-    #clear()
     board = TicTacToeBoard(board_size)
     msg = play(board, player1, sym1, player2, sym2)
-    print(msg)
+    endScreen(msg)
 
-playGame(3, playerMove, 'O', computerMove, 'X')
+def welcomeScreen():
+    print("Welcome Player. Choose Option")
+    print("1. Play with AI")
+    print("2. Play with pear")
+    choice = input()
+    while(choice != "1" and choice != "2"):
+        print("Invalid choice")
+        choice = input()
+    print("Player-1: O and Player-2: X")
+    print("Choose board size")
+    sz = int(input())
+    while(not (0 < sz <= 15)):
+        print("Invalid choice")
+        sz = int(input())
+    if choice == "1":
+        playGame(sz, playerMove, 'O', computerMove, 'X')
+    else:
+        playGame(sz, playerMove, 'O', computerMove, 'X')
+    
+
+
+welcomeScreen()
+
 
