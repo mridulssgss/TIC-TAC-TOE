@@ -173,6 +173,9 @@ def winningMove(board: TicTacToeBoard, ch):
 
 def computerMove(board: TicTacToeBoard, move_char):
     "does move according to heuristic and changes state of board"
+    print("-----")
+    board.prnBoard()
+    print("-----")
     op_player = oppPlayer(move_char)
     
     won, pos = winningMove(board, move_char)
@@ -208,9 +211,9 @@ def play(board: TicTacToeBoard, player, sym1, opp, sym2):
         board.prnBoard()
         move = player(board, sym1)
         board.putMove(move[0], move[1], sym1)
-        no_of_moves += 1
-        
+        no_of_moves += 1    
         if(board.winningMove(move[0], move[1])): break
+        
         #clear()
         board.prnBoard()
         move = opp(board, sym2)
@@ -234,6 +237,7 @@ def playGame(board_size, player1, sym1, player2, sym2):
     msg = play(board, player1, sym1, player2, sym2)
     print(msg)
 
+play(TicTacToeBoard(3), playerMove, '0', computerMove, 'X')
 
-#playGame(3, playerMove, '0', computerMove, 'X')
+
 
