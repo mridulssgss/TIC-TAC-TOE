@@ -1,6 +1,9 @@
 # Name: Mrityunjay Jha
 # Date: 21-01-2022
 
+import enum
+from subprocess import call
+import os
 
 class TicTacToeBoard:
     def __init__(self, board_size):
@@ -165,7 +168,6 @@ def winningMove(board: TicTacToeBoard, ch):
     if won: (won, move_pos)
 
     won, move_pos = diagNMinusOne(board, ch)
-    #print(f"move = {move_pos} (mx, my) = {mx}, {my} won = {won}")
     return (won, move_pos) if won else (won, (mx, my))
 
 
@@ -188,35 +190,50 @@ def playerMove(board: TicTacToeBoard, move_char):
     
     return x, y
 
+class Moves(enum.Enum):
+    win = 1
+    lose = 2
+    draw = 2
+
+def clear():
+    call('clear' if os.name == 'posix' else 'cls')
+
 def play(board: TicTacToeBoard, player, sym1, opp, sym2):
     move = (0, 0)
     no_of_moves = 0
     max_moves = board.board_size * board.board_size
 
     while(no_of_moves < max_moves and not board.winningMove(move[0], move[1])):
+        #clear()
         board.prnBoard()
         move = player(board, sym1)
         board.putMove(move[0], move[1], sym1)
         no_of_moves += 1
         
         if(board.winningMove(move[0], move[1])): break
-        
+        #clear()
         board.prnBoard()
         move = opp(board, sym2)
-        print(f"Player Move = {move}")
+        print(f"Player move = {move}")
         board.putMove(move[0], move[1], sym2)
         no_of_moves += 1
     
+    print((" " * 65) +" Game over")
     board.prnBoard()
+    if no_of_moves == max_moves:
+        return Moves.draw
     if(no_of_moves % 2):
-        print("Player 1 wins")
+        return Moves.win
     else:
-        print("Player 2 wins")
+        return Moves.lose
 
 
+def playGame(board_size, player1, sym1, player2, sym2):
+    #clear()
+    board = TicTacToeBoard(board_size)
+    msg = play(board, player1, sym1, player2, sym2)
+    print(msg)
 
 
-#play(TicTacToeBoard(3), computerMove, 'O', computerMove, 'X')
-
-    
+#playGame(3, playerMove, '0', computerMove, 'X')
 
