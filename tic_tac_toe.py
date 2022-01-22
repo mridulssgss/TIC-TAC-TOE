@@ -173,9 +173,6 @@ def winningMove(board: TicTacToeBoard, ch):
 
 def computerMove(board: TicTacToeBoard, move_char):
     "does move according to heuristic and changes state of board"
-    print("-----")
-    board.prnBoard()
-    print("-----")
     op_player = oppPlayer(move_char)
     
     won, pos = winningMove(board, move_char)
@@ -199,7 +196,7 @@ class Moves(enum.Enum):
     draw = 3
 
 def clear():
-    call('clear' if os.name == 'posix' else 'cls')
+    call('clear' if os.name == 'posix' or os.name == 'nt' else 'cls')
 
 def play(board: TicTacToeBoard, player, sym1, opp, sym2):
     move = (0, 0)
@@ -207,14 +204,14 @@ def play(board: TicTacToeBoard, player, sym1, opp, sym2):
     max_moves = board.board_size * board.board_size
 
     while(no_of_moves < max_moves and not board.winningMove(move[0], move[1])):
-        #clear()
+        clear()
         board.prnBoard()
         move = player(board, sym1)
         board.putMove(move[0], move[1], sym1)
         no_of_moves += 1    
         if(board.winningMove(move[0], move[1])): break
         
-        #clear()
+        clear()
         board.prnBoard()
         move = opp(board, sym2)
         print(f"Player move = {move}")
