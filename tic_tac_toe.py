@@ -196,7 +196,7 @@ def playerMove(board: TicTacToeBoard, move_char):
 class Moves(enum.Enum):
     win = 1
     lose = 2
-    draw = 2
+    draw = 3
 
 def clear():
     call('clear' if os.name == 'posix' else 'cls')
@@ -220,12 +220,11 @@ def play(board: TicTacToeBoard, player, sym1, opp, sym2):
         print(f"Player move = {move}")
         board.putMove(move[0], move[1], sym2)
         no_of_moves += 1
-    
     print((" " * 65) +" Game over")
     board.prnBoard()
-    if no_of_moves == max_moves:
+    if no_of_moves >= max_moves:
         return Moves.draw
-    if(no_of_moves % 2):
+    elif(no_of_moves % 2):
         return Moves.win
     else:
         return Moves.lose
@@ -237,7 +236,5 @@ def playGame(board_size, player1, sym1, player2, sym2):
     msg = play(board, player1, sym1, player2, sym2)
     print(msg)
 
-play(TicTacToeBoard(3), playerMove, '0', computerMove, 'X')
-
-
+playGame(3, playerMove, 'O', computerMove, 'X')
 
