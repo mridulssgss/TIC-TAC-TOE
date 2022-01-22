@@ -16,7 +16,7 @@ class TicTacToeBoard:
             for j in range(self.board_size):
                 print(self._board[i][j], end = "|")
             print("")
-            print("---" * self.board_size)
+            print("--" * self.board_size)
         for j in range(self.board_size):
             print(self._board[-1][j], end = "|")
         print("")
@@ -69,75 +69,72 @@ class TicTacToeBoard:
         if 0 <= x < self.board_size and 0 <= y < self.board_size:
             self._board[x][y] = ' '
 
-    
-    
-"""
-board = TicTacToeBoard(3)
-board.putMove(0, 0, 'X')
-board.prnBoard()
-board.putMove(1, 2, 'Y')
-board.putMove(0, 1, 'X')
-board.putMove(0, 2, 'X')
-
-board.prnBoard()
-
-if board.winningMove(0, 0):
-    print("winner")
-"""    
 
 def oppPlayer(char):
     dict = {'X':'O', 'O':'X'}
     return dict[char] if char in dict else ' '
 
+
 def rowNMinusOne(board: TicTacToeBoard, r, ch):
     vacant_pos = -1
     ch_reads = 0
+    
     for j in range(board.board_size):
         if(board.getMove(r, j) == ' '):
-            vacant_pos = j
+            vacant_pos = (r, j)
         elif(board.getMove(r, j) == ch):
             ch_reads += 1
-    if(ch_reads == board.board_size - 1):
-        return (True, vacant_pos)
-    else:
-        return (False, vacant_pos)
     
-def colNMinusOne(board, c, ch):
-    vacant_pos = -1
-    ch_reads = 0
-    for i in range(board.board_size):
-        if(board.getMove(i, c) == ' '):
-            vacant_pos = i
-        elif(board.getMove(i, c) == ch):
-            ch_reads += 1
-    if(ch_reads == board.board_size - 1):
+    if(ch_reads == board.board_size - 1 and vacant_pos != -1):
         return (True, vacant_pos)
     else:
         return (False, vacant_pos)
 
+
+def colNMinusOne(board, c, ch):
+    vacant_pos = -1
+    ch_reads = 0
+    
+    for i in range(board.board_size):
+        if(board.getMove(i, c) == ' '):
+            vacant_pos = (i, c)
+        elif(board.getMove(i, c) == ch):
+            ch_reads += 1
+    
+    if(ch_reads == board.board_size - 1 and vacant_pos != -1):
+        return (True, vacant_pos)
+    else:
+        return (False, vacant_pos)
+
+
 def firstDiagNMinusOne(board: TicTacToeBoard, ch):
     vacant_pos = -1
     char_reads = 0
+    
     for i in range(board.board_size):
         if(board.getMove(i, i) == ' '):
             vacant_pos = (i, i)
         elif(board.getMove(i, i) == ch):
             char_reads += 1
-    if(char_reads == board.board_size - 1):
+    
+    if(char_reads == board.board_size - 1 and vacant_pos != -1):
         return (True, vacant_pos)       
     else:
         return (False, vacant_pos)
 
+
 def secondDiagMinusOne(board: TicTacToeBoard, ch):
     vacant_pos = -1
     char_reads = 0
+    
     for f in range(board.board_size):
         r, c = f, board.board_size - 1 - f
         if(board.getMove(r, c) == ' '):
             vacant_pos = (r, c)
         elif(board.getMove(r, c) == ch):
             char_reads += 1
-    if(char_reads == board.board_size - 1):
+    
+    if(char_reads == board.board_size - 1 and vacant_pos != -1):
         return (True, vacant_pos)
     else:
         return (False, vacant_pos)
@@ -148,24 +145,26 @@ def diagNMinusOne(board: TicTacToeBoard, ch):
     won, pos = secondDiagMinusOne(board, ch)    
     return won, pos
 
+
 def winningMove(board: TicTacToeBoard, ch):
     mx, my = -1, -1
     for r in range(board.board_size):
-        wmv, c = rowNMinusOne(board, r, ch)
-        if(wmv): return (wmv, (r, c))
-        if(c != -1 and mx == -1 and my == -1):
-            mx, my = r, c
+        wmv, move = rowNMinusOne(board, r, ch)
+        if(wmv): return (wmv, move)
+        if(move != -1 and mx == -1 and my == -1):
+            mx, my = move
 
     for c in range(board.board_size):
-        wmv, r = colNMinusOne(board, c, ch)
-        if(wmv): return (wmv, (r, c))
+        wmv, move = colNMinusOne(board, c, ch)
+        if(wmv): return (wmv, move)
     
     won, move_pos = diagNMinusOne(board, ch)
     if won: (won, move_pos)
 
     won, move_pos = diagNMinusOne(board, ch)
     #print(f"move = {move_pos} (mx, my) = {mx}, {my} won = {won}")
-    return (won, move_pos) if won else (False, (mx, my))
+    return (won, move_pos) if won else (won, (mx, my))
+
 
 def computerMove(board: TicTacToeBoard, move_char):
     "does move according to heuristic and changes state of board"
@@ -179,9 +178,11 @@ def computerMove(board: TicTacToeBoard, move_char):
 
 def playerMove(board: TicTacToeBoard, move_char):
     x, y = [int(j) for j in input().split()]
+    
     while(not board.isLegal(x, y, move_char)):
         print("Illegal Move. Try Again")
         x, y = [int(j) for j in input().split()]
+    
     return x, y
 
 def play(board: TicTacToeBoard, player, sym1, opp, sym2):
@@ -209,8 +210,26 @@ def play(board: TicTacToeBoard, player, sym1, opp, sym2):
     else:
         print("Player 2 wins")
 
+"""
+def putMoves(board: TicTacToeBoard, lst, sym):
+    for m in lst:
+        board.putMove(m[0], m[1], sym)
 
-play(TicTacToeBoard(3), playerMove, 'O', computerMove, 'X')
+        
+board = TicTacToeBoard(3)
+putMoves(board, [(0, 0), (2, 0), (2, 2)], 'O')
+putMoves(board, [(0, 2), (1, 1)], 'X')
+board.prnBoard()
+won, pos = winningMove(board, 'X')
+print(f"won = {won} pos = {pos}")
+pos = computerMove(board, 'X')
+print(f"pos = {pos}")
+"""
+   
+
+
+
+play(TicTacToeBoard(3), computerMove, 'O', computerMove, 'X')
 
     
 
