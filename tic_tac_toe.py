@@ -2,7 +2,6 @@
 # Date: 21-01-2022
 
 import enum
-from subprocess import call
 import os
 
 class TicTacToeBoard:
@@ -196,7 +195,10 @@ class Moves(enum.Enum):
     draw = 3
 
 def clear():
-    call('clear' if os.name == 'posix' or os.name == 'nt' else 'cls')
+    if os.name == 'posix':
+        os.system('clear')
+    else:
+        os.system('cls')
 
 def play(board: TicTacToeBoard, player, sym1, opp, sym2):
     move = (0, 0)
